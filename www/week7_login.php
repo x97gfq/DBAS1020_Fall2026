@@ -5,8 +5,7 @@
 // This is the deliberately broken login from the Week 7 lecture notes.
 // Never write code like this - never glue user input into a query string.
 //
-// Open http://localhost/week7_login.php
-// (On a classroom VM it is http://<your-vm-ip>/week7_login.php)
+// Open http://localhost/week7_login.php  (your own Docker container)
 //
 // Run initdb/02_users.sql first so the users table exists.
 
@@ -28,9 +27,15 @@ if (isset($_POST['user'])) {
     // ----------------------------------------------------------------
     // THE VULNERABILITY: $user and $pass are pasted straight into SQL.
     // Two columns are selected so the lecture's UNION payload lines up.
+    //
+    // Note the password IS hashed before it is compared (SHA2), so an honest
+    // login with the right password works and the DB never stores cleartext.
+    // Hashing does NOT save us here - the injection is in the USERNAME, which
+    // is still glued in raw. Good password hygiene and SQL injection are two
+    // separate problems.
     // ----------------------------------------------------------------
     $sqlShown = "SELECT username, password FROM users "
-              . "WHERE username = '$user' AND password = '$pass'";
+              . "WHERE username = '$user' AND password = SHA2('$pass', 256)";
 
     try {
         $result = $conn->query($sqlShown);
@@ -76,7 +81,7 @@ if (isset($_POST['user'])) {
 
 <div class="warn">
  <b>Teaching page - intentionally vulnerable.</b> This login glues your input
- straight into a SQL query. It exists only so you can attack it on your own VM.
+ straight into a SQL query. It exists only so you can attack it on your own container.
  Never write code like this, and never run these payloads against a system you do not own.
 </div>
 
