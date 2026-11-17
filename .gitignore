@@ -2,3 +2,9 @@ notes/
 assignment3_answer_key/
 www/week7_login_fixed.php
 scripts/week7_login_fixed.php
+assignment1_answer_key/
+assignment2_answer_key/
+temp/
+assignment4_answer_key/
+backups/*
+!backups/.gitkeep

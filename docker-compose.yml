@@ -23,6 +23,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./initdb:/docker-entrypoint-initdb.d
+      - ./backups:/backups            # Week 11: mysqldump writes here, shows up in your repo's backups folder
 
   phpmyadmin:
     image: phpmyadmin:latest
@@ -34,5 +35,18 @@ services:
     depends_on:
       - db
 
+  mongo:                            # Week 11: a document database to compare with MySQL
+    image: mongo:8.0
+    container_name: dbsec-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root      # without these two lines MongoDB has NO login at all
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - "127.0.0.1:27017:27017"            # 127.0.0.1 = only this computer can connect, not the network
+    volumes:
+      - mongo_data:/data/db
+
 volumes:
   mysql_data:
+  mongo_data:
